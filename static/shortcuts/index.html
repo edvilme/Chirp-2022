@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 16px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        nav{
+            display: flex;
+            column-gap: 1rem;
+            align-items: center;
+        }
+        h1 {
+            margin: 0.5rem 0rem;
+        }
+        #trigger{
+            font-size: 1em;
+            vertical-align: middle;
+        }
+        #blockly {
+            flex: 1;
+            height: 100%;
+            width: 100%;
+        }
+        #controls {
+            display: flex;
+            justify-content: flex-end;
+            padding: 4px 0px;
+        }
+            #controls button {
+                font-size: 1.2rem;
+            }
+    </style>
+</head>
+<body>
+    <nav>
+        <button id="back">Back</button>
+        <div id="shortcut_id"></div>
+    </nav>
+    <h1>
+        When
+        <select id="trigger">
+            <option value="mute_event">I mute someone</option>
+            <option value="unmute_event">I ummute someone</option>
+            <option value="block_event">I block someone</option>
+            <option value="unblock_event">I unblock someone</option>
+            <option value="unfollow_event">I unfollow someone</option>
+            <option value="follow_event_incoming">Someone follows me</option>
+            <option value="follow_event_outgoing">I follow someone</option>
+            <option value="favorite_event_outgoing">I like a tweet</option>
+            <option value="favorite_event_incoming">Someone likes my tweets</option>
+            <option value="reply_event_incoming">Someone replies my tweets</option>
+            <option value="reptweet_event_incoming">Someone retweets my tweets</option>
+            <option value="mention_event_incoming">Someone mentions me</option>
+            <option value="quote_event_incoming">Someone quotes my tweets</option>
+            <option value="tweet_event_outgoing">I post a tweet</option>
+        </select>
+        , do...
+    </h1>
+    <div id="blockly" style="width: 100%;"></div>
+    <div id="controls">
+        <button id="save">Save</button>
+        <button id="delete">Delete</button>
+    </div>
+
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <script src="https://unpkg.com/blockly@8.0.5/javascript_compressed.js"></script>
+
+    <script type="module">
+        import toolbox from './editor.js';
+        const workspace = Blockly.inject('blockly', {
+            toolbox, 
+            zoom: {
+                controls: true
+            },
+            //horizontalLayout: true
+        });
+        Blockly.svgResize(workspace);
+        function getCode(){
+            const code = Blockly.JavaScript.workspaceToCode(workspace);
+            console.log(code)
+            return code;
+        }
+        // https://stackoverflow.com/a/62604813/2276332
+        function getXml(){
+            var xmlDom = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
+            var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+            console.log(xmlText)
+            return xmlText;
+        }
+        function loadXml(xml){
+            try{
+                var dom = Blockly.Xml.textToDom(xml);
+                Blockly.mainWorkspace.clear();
+                Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, dom);
+            } catch(e){
+
+            }
+        }
+        async function openShortcut(){
+            const id = new URLSearchParams(window.location.search).get('id');
+            if(!id) {
+                document.querySelector('#shortcut_id').innerHTML = 'New shortcut'
+                return 
+            };
+            document.querySelector('#shortcut_id').innerHTML = id;
+            try{
+                const req = await fetch(`http://127.0.0.1:3000/api/shortcuts/${id}`);
+                const res = await req.json();
+                loadXml(res.blocklyXml)
+                document.querySelector('#trigger').value = res.type;
+            } catch(e){
+                console.error(e)
+                //window.location.replace('/static/shortcuts')
+            }
+        }
+
+        async function saveShortcut(){
+            const id = new URLSearchParams(window.location.search).get('id');
+            const url = id ? `/api/shortcuts/${id}` : `/api/shortcuts`;
+            const blocklyXml = getXml();
+            const jsCode = getCode();
+            const type = document.querySelector('#trigger').value;
+
+            const req = await fetch(url, {
+                method: 'POST', 
+                body: JSON.stringify({
+                    blocklyXml, jsCode, type
+                }),
+                headers: new Headers({'content-type': 'application/json'})
+            });
+            const res = await req.json();
+            if(res.doc){
+                window.location.assign(`/static/shortcuts?id=${res.doc}`)
+            }
+        }
+
+        openShortcut();
+
+        document.querySelector('#save').addEventListener('click', saveShortcut)
+        document.querySelector('#back').addEventListener('click', () => {
+            window.location.replace('/static/shortcuts/all.html')
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            padding: 16px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .section {
+            background: whitesmoke;
+            padding: 8px;
+            margin: 16px 0px;
+        }
+        .control {
+            padding: 16px 0px;
+            display: flex;
+            flex-direction: column;
+        }
+        .control input{
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            margin: 2px;
+            background: #d3d3d3;
+            outline: none;
+        }
+        footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 4px 0px;
+        }
+            footer button {
+                font-size: 1.2rem;
+            }
+    </style>
+</head>
+<body>
+    <h1>Settings</h1>
+    <p>Update the weight of the following metrics to customize your scoring experience</p>
+    <form id="user_score_weights" class="section">
+        <h2>User score</h2>
+
+        <div class="control">
+            <label for="followers">followers</label>
+            <input type="range" name="followers" id="followers" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="followings">followings</label>
+            <input type="range" name="followings" id="followings" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="mutualMentions">mutualMentions</label>
+            <input type="range" name="mutualMentions" id="mutualMentions" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="commonMentions">commonMentions</label>
+            <input type="range" name="commonMentions" id="commonMentions" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="mutualRetweets">mutualRetweets</label>
+            <input type="range" name="mutualRetweets" id="mutualRetweets" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="commonRetweets">commonRetweets</label>
+            <input type="range" name="commonRetweets" id="commonRetweets" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="mutualLikes">mutualLikes</label>
+            <input type="range" name="mutualLikes" id="mutualLikes" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="commonLikes">commonLikes</label>
+            <input type="range" name="commonLikes" id="commonLikes" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="commonHashtags">commonHashtags</label>
+            <input type="range" name="commonHashtags" id="commonHashtags" min="0" max="1" step="0.01">
+        </div>
+    </form>
+    <form id="tweet_score_weights" class="section">
+        <h2>Tweet score</h2>
+        <div class="control">
+            <label for="author">author</label>
+            <input type="range" name="author" id="author" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="commonHashtags">commonHashtags</label>
+            <input type="range" name="commonHashtags" id="commonHashtags" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="commonMentions">commonMentions</label>
+            <input type="range" name="commonMentions" id="commonMentions" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="commonUrls">commonUrls</label>
+            <input type="range" name="commonUrls" id="commonUrls" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="commonTopics">commonTopics</label>
+            <input type="range" name="commonTopics" id="commonTopics" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="urlPageRank">urlPageRank</label>
+            <input type="range" name="urlPageRank" id="urlPageRank" min="0" max="1" step="0.01">
+        </div>
+        <div class="control">
+            <label for="urlNoThreats">urlNoThreats</label>
+            <input type="range" name="urlNoThreats" id="urlNoThreats" min="0" max="1" step="0.01">
+        </div>
+    </form>
+    <footer>
+        <button id="save">Save</button>
+    </footer>
+    <script>
+        async function save(){
+            const tweetScoreWeightFormData = new FormData(document.querySelector('#tweet_score_weights'))
+            const usercoreWeightFormData = new FormData(document.querySelector('#user_score_weights'))
+            const data = {
+                tweetScoreWeights: {}, 
+                userScoreWeights: {}
+            }
+            for(const [key, value] of tweetScoreWeightFormData) {
+                data.tweetScoreWeights[key] = Number(value);
+            }
+            for(const [key, value] of usercoreWeightFormData) {
+                data.userScoreWeights[key] = Number(value);
+            }
+            const req = await fetch('/api/settings', {
+                method: 'POST', 
+                body: JSON.stringify(data), 
+                headers: new Headers({'content-type': 'application/json'})
+            })
+            return await req.json();
+        }
+        async function load(){
+
+                const req = await fetch('/api/settings');
+                const res = await req.json();
+                const tweetScoreWeightsSection = document.querySelector('#tweet_score_weights');
+                for (const key in res.tweetScoreWeights){
+                    tweetScoreWeightsSection.querySelector(`#${key}`).value = res.tweetScoreWeights[key]
+                }
+                const userScoreWeightsSection = document.querySelector('#user_score_weights');
+                for (const key in res.userScoreWeights){
+                    userScoreWeightsSection.querySelector(`#${key}`).value = res.userScoreWeights[key]
+                }
+        }
+
+        load()
+        document.querySelector('#save').addEventListener('click', save)
+    </script>
+</body>
+</html>

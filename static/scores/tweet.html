@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Tweet Score</h1>
+    <table>
+        <thead>
+            <tr>
+                <td colspan="2" id="weightedScore">
+                    Score
+                </td>
+            </tr>
+        </thead>
+        <tr>
+            <td>Author score</td>
+            <td id="authorRelation"></td>
+        </tr>
+        <tr>
+            <td>Common hashtags</td>
+            <td id="commonHashtags"></td>
+        </tr>
+        <tr>
+            <td>Common mentions</td>
+            <td id="commonMentions"></td>
+        </tr>
+        <tr>
+            <td>Common urls</td>
+            <td id="commonUrls"></td>
+        </tr>
+        <tr>
+            <td>Common topics</td>
+            <td id="commonTopics"></td>
+        </tr>
+        <tr>
+            <td>Url page rank</td>
+            <td id="urlPageRank"></td>
+        </tr>
+        <tr>
+            <td>Url page safe</td>
+            <td id="urlNoThreats"></td>
+        </tr>
+    </table>
+
+    <script>
+        async function loadData(){
+            const id = new URLSearchParams(window.location.search).get('id') || "1560551764969115650";
+            const req = await fetch(`/api/score/tweet/${id}`);
+            const res = await req.json();
+
+            for (let key in res){
+                if(key == "authorRelation"){
+                    document.getElementById(key).innerHTML = (Number(res.authorRelation.weightedScore)*100).toFixed(2);
+                } else {
+                    document.getElementById(key).innerHTML = (Number(res[key])*100).toFixed(2)
+                }
+            }
+        }
+
+        loadData()
+    </script>
+</body>
+</html>
