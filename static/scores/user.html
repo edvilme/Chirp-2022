@@ -7,7 +7,7 @@
     <title></title>
 </head>
 <body>
-    
+    <h1>User Score</h1>
     <table>
         <thead>
             <tr>
@@ -17,39 +17,47 @@
             </tr>
         </thead>
         <tr>
-            <td>Author score</td>
-            <td id="authorRelation"></td>
+            <td>Followers</td>
+            <td id="followers"></td>
         </tr>
         <tr>
-            <td>Common hashtags</td>
+            <td>Following</td>
+            <td id="following"></td>
+        </tr>
+        <tr>
+            <td>Hashtags</td>
             <td id="commonHashtags"></td>
         </tr>
         <tr>
-            <td>Common mentions</td>
+            <td>Likes (mutual)</td>
+            <td id="mutualLikes"></td>
+        </tr>
+        <tr>
+            <td>Likes (common)</td>
+            <td id="commonLikes"></td>
+        </tr>
+        <tr>
+            <td>Mentions (mutual)</td>
+            <td id="mutualMentions"></td>
+        </tr>
+        <tr>
+            <td>Mentions (common)</td>
             <td id="commonMentions"></td>
         </tr>
         <tr>
-            <td>Common urls</td>
-            <td id="commonUrls"></td>
+            <td>Retweets (mutual)</td>
+            <td id="mutualRetweets"></td>
         </tr>
         <tr>
-            <td>Common topics</td>
-            <td id="commonTopics"></td>
-        </tr>
-        <tr>
-            <td>Url page rank</td>
-            <td id="urlPageRank"></td>
-        </tr>
-        <tr>
-            <td>Url page safe</td>
-            <td id="urlNoThreats"></td>
+            <td>Retweets (common)</td>
+            <td id="commonRetweets"></td>
         </tr>
     </table>
 
     <script>
         async function loadData(){
-            const id = new URLSearchParams(window.location.search).get('id') || "1560551764969115650";
-            const req = await fetch(`/api/score/tweet/${id}`);
+            const id = new URLSearchParams(window.location.search).get('id');
+            const req = await fetch(`/api/score/user/${id}`);
             const res = await req.json();
 
             for (let key in res){
