@@ -51,7 +51,7 @@ app.get('/api/isloggedin', async (req, res) => {
 })
 
 app.get('/api/login', async (req, res) => {
-    const authUrl = await twitterAppClient.generateAuthLink('http://127.0.0.1:3000/api/login/callback');
+    const authUrl = await twitterAppClient.generateAuthLink('https://twitter-plus-plus.herokuapp.com/api/login/callback');
     // store in session
     req.session.user_token = {
         oauth_token_secret: authUrl.oauth_token_secret
