@@ -64,7 +64,7 @@
                 if(key == "authorRelation"){
                     document.getElementById(key).innerHTML = res.authorRelation.weightedScore;
                 } else {
-                    document.getElementById(key).innerHTML = res[key]
+                    document.getElementById(key)?.innerHTML = res[key]
                 }
             }
         }
