@@ -10,7 +10,7 @@ import { collection, query, where, getDocs, setDoc, doc, getDoc, deleteDoc, addD
 import firestoreDatabase from './firebase.js';
 import crypto from "crypto";
 import TwitterEvent from './models/event.js';
-var cors = require('cors')
+import cors from 'cors';
 const app = express();
 app.use(cors())
 app.use(
