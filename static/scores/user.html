@@ -23,7 +23,7 @@
         </tr>
         <tr>
             <td>Following</td>
-            <td id="following"></td>
+            <td id="followings"></td>
         </tr>
         <tr>
             <td>Hashtags</td>
@@ -63,10 +63,10 @@
 
             for (let key in res){
                 if(key == "authorRelation"){
-                    document.getElementById(key).innerHTML = res.authorRelation.weightedScore;
+                    document.getElementById(key).innerHTML = (Number(res.authorRelation.weightedScore)*100).toFixed(2);
                 } else {
                     if(document.getElementById(key)) 
-                        document.getElementById(key).innerHTML = res[key]
+                        document.getElementById(key).innerHTML = (Number(res[key])*100).toFixed(2)
                 }
             }
         }
