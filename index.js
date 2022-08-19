@@ -25,7 +25,6 @@ app.use(
 
 app.use(express.json());
 
-app.use('/static/', requireAuthentication, express.static('static'));
 
 const requireAuthentication = async (req, res, next) => {
     if(req.session.user_token == undefined)
@@ -35,6 +34,9 @@ const requireAuthentication = async (req, res, next) => {
         return res.redirect('/api/login');
     return next()
 }
+
+app.use('/static/', requireAuthentication, express.static('static'));
+
 
 // https://github.com/twitterdev/account-activity-dashboard/blob/master/helpers/security.js
 function get_challenge_response(crc_token, consumer_secret){
