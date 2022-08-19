@@ -35,7 +35,7 @@ const requireAuthentication = async (req, res, next) => {
     return next()
 }
 
-app.use('/static/', requireAuthentication, express.static('static'));
+app.use('/static/', express.static('static'));
 
 
 // https://github.com/twitterdev/account-activity-dashboard/blob/master/helpers/security.js
