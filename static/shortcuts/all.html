@@ -14,5 +14,26 @@
 </head>
 <body>
     <h1>All my shortcuts</h1>
+    <main>
+
+    </main>
+
+    <script>
+        async function load(){
+            const req = await fetch('https://twitter-plus-plus.herokuapp.com/api/shortcuts');
+            const res = await req.json();
+            const main = document.querySelector('main');
+            main.innerHTML = "";
+            for(let data of res){
+                main.innerHTML+=`
+                    <li> 
+                        <a href="/static/shortcuts/index.html?id=${data.id}"> 
+                            <strong>${data.type}</strong> (${data.id})
+                        </a> 
+                    </li>
+                `
+            }
+        }
+    </script>
 </body>
 </html>
