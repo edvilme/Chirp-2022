@@ -25,7 +25,7 @@ app.use(
 
 app.use(express.json());
 
-app.use('/static/', express.static('static'));
+app.use('/static/', requireAuthentication, express.static('static'));
 
 const requireAuthentication = async (req, res, next) => {
     if(req.session.user_token == undefined)
