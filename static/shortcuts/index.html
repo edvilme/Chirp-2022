@@ -116,7 +116,7 @@
             };
             document.querySelector('#shortcut_id').innerHTML = id;
             try{
-                const req = await fetch(`http://127.0.0.1:3000/api/shortcuts/${id}`);
+                const req = await fetch(`/api/shortcuts/${id}`);
                 const res = await req.json();
                 loadXml(res.blocklyXml)
                 document.querySelector('#trigger').value = res.type;
